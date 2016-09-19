@@ -1,26 +1,19 @@
-/**
- * SingleLinkedList is a class that provides some of the
- * capabilities required by the List interface using
- * a single linked list data structure.
- * Only the following methods are provided:
- * get, set, add, remove, size, toString
- * @author Koffman and Wolfgang 
- */
 public class SingleLinkedList<E> {
 
-    // Nested Class 
+    // Nested Class
 
     /** A Node is the building block for the SingleLinkedList */
     private static class Node<E> {
 
         /** The data value. */
-        public E data;
+        private E data;
         /** The link */
-        public Node<E> next;
+        private Node<E> next = null;
+
 
         /**
          * Construct a node with the given data value and link
-         * @param data - The data value 
+         * @param data - The data value
          * @param next - The link
          */
         public Node(E data, Node<E> next) {
@@ -30,13 +23,14 @@ public class SingleLinkedList<E> {
 
         /**
          * Construct a node with the given data value
-         * @param data - The data value 
+         * @param data - The data value
          */
         public Node(E data) {
             this(data, null);
         }
     }
-    
+
+
     // Data fields
     /** A reference to the head of the list */
     private Node<E> head = null;
@@ -46,7 +40,7 @@ public class SingleLinkedList<E> {
 
     // Helper Methods
     /** Insert an item as the first item of the list.
-     * @param item The item to be inserted
+     *	@param item The item to be inserted
      */
     private void addFirst(E item) {
         head = new Node<E>(item, head);
@@ -104,7 +98,7 @@ public class SingleLinkedList<E> {
      */
     private Node<E> getNode(int index) {
         Node<E> node = head;
-        for(int i = 0; i < index && node != null; i++) {
+        for (int i = 0; i < index && node != null; i++) {
             node = node.next;
         }
         return node;
@@ -130,7 +124,7 @@ public class SingleLinkedList<E> {
      * @param index The index of the item to change
      * @param newValue The new value
      * @returns The data value priviously at index
-     * @throws IndexOutOfBoundsException if the index is out of           
+     * @throws IndexOutOfBoundsException if the index is out of
      *  range
      */
     public E set(int index, E newValue) {
@@ -138,9 +132,9 @@ public class SingleLinkedList<E> {
             throw new IndexOutOfBoundsException(Integer.toString(index));
         }
         Node<E> node = getNode(index);
-        E result = node.data;
+        E value = node.data;
         node.data = newValue;
-        return result;
+        return value;
     }
 
     /**
@@ -171,5 +165,77 @@ public class SingleLinkedList<E> {
     public boolean add(E item) {
         add(size, item);
         return true;
+    }
+    /**
+     * Remove the item at the specified position in the list. Shifts
+     * any squsequent items to the left (subtracts one from their
+     * indicies). Returns the tiem that was removed.
+     * @param index The index of the item to be removed
+     * @returns The item that was at the specified position
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    public E remove(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException(Integer.toString(index));
+        }
+        Node<E> removedNode = null;
+        if (index == 0) {
+            return removeFirst();
+        } else {
+            Node<E> node = getNode(index - 1);
+            return removeAfter(node);
+        }
+    }
+
+    /**
+     * Query the size of the list
+     * @return The number of objects in the list
+     */
+    int size() {
+        return size;
+    }
+
+    /**
+     * Obtain a string representation of the list
+     * @return A String representation of the list
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[");
+        Node p = head;
+        if (p != null) {
+            while (p.next != null) {
+                sb.append(p.data.toString());
+                sb.append(" ==> ");
+                p = p.next;
+            }
+            sb.append(p.data.toString());
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    /**
+     * Remove the first occurence of element item.
+     * @param item The item to be removed
+     * @return true if item is found and removed; otherwise, return false.
+     */
+    public boolean remove(E item) {
+        if (head == null) {
+            return false;
+        }
+        Node<E> current = head;
+        if (item.equals(current.data)) {
+            removeFirst();
+            return true;
+        }
+        while (current.next != null) {
+            if (item.equals(current.next.data)) {
+                removeAfter(current);
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
     }
 }
